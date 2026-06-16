@@ -27,7 +27,10 @@
   });
   document.documentElement.lang = initialLang === 'hi' ? 'hi' : 'en';
 
-  /* ---------- Mobile menu ---------- */
+  /* ---------- Mobile menu ----------
+     Header on phones shows only [brand] [hamburger]. The language toggle
+     and Donate CTA from the desktop header are cloned into the slide-out
+     panel on first init so they're discoverable inside the menu too. */
   const menuToggle = document.querySelector('.menu-toggle');
   const navLinks = document.querySelector('.nav-links');
   if (menuToggle && navLinks) {
@@ -41,21 +44,75 @@
       document.body.classList.add('menu-open');
       menuToggle.setAttribute('aria-expanded', 'true');
     }
-    menuToggle.addEventListener('click', () => {
+
+    /* --- Inject mobile-only menu chrome (close button + extras) once --- */
+    if (!navLinks.dataset.mobileReady) {
+      navLinks.dataset.mobileReady = '1';
+
+      const header = document.createElement('div');
+      header.className = 'menu-header';
+      const title = document.createElement('span');
+      title.className = 'menu-header-title';
+      const titleHi = document.createElement('span');
+      titleHi.className = 'lang-hi'; titleHi.textContent = 'मेनू';
+      const titleEn = document.createElement('span');
+      titleEn.className = 'lang-en'; titleEn.textContent = 'Menu';
+      title.append(titleHi, titleEn);
+
+      const closeBtn = document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.className = 'menu-close';
+      closeBtn.setAttribute('aria-label', 'Close menu');
+      closeBtn.textContent = '✕';     /* ✕ */
+      closeBtn.addEventListener('click', closeMenu);
+
+      header.append(title, closeBtn);
+      navLinks.prepend(header);
+
+      /* Clone header lang toggle + donate CTA into a "menu-extras" block */
+      const srcLang = document.querySelector('.nav-cta .lang-toggle');
+      const srcDonate = document.querySelector('.nav-cta > .btn-primary');
+      if (srcLang || srcDonate) {
+        const extras = document.createElement('div');
+        extras.className = 'menu-extras';
+
+        if (srcLang) {
+          const langClone = srcLang.cloneNode(true);
+          langClone.querySelectorAll('button').forEach(b => {
+            b.addEventListener('click', () => {
+              setLang(b.dataset.lang);
+              /* re-sync active state in both copies */
+              document.querySelectorAll('.lang-toggle button').forEach(x => {
+                x.classList.toggle('active', x.dataset.lang === b.dataset.lang);
+              });
+            });
+            if (b.dataset.lang === initialLang) b.classList.add('active');
+          });
+          extras.append(langClone);
+        }
+
+        if (srcDonate) {
+          const donateClone = srcDonate.cloneNode(true);
+          donateClone.addEventListener('click', closeMenu);
+          extras.append(donateClone);
+        }
+        navLinks.append(extras);
+      }
+    }
+
+    menuToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
       if (navLinks.classList.contains('open')) closeMenu(); else openMenu();
     });
     navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
 
-    /* Backdrop tap closes the menu. The dim overlay is a ::before pseudo on
-       body.menu-open — clicks on any non-menu area while the menu is open
-       are treated as a request to close. */
+    /* Backdrop / outside tap closes */
     document.addEventListener('click', (e) => {
       if (!document.body.classList.contains('menu-open')) return;
       if (e.target.closest('.nav-links')) return;
       if (e.target.closest('.menu-toggle')) return;
       closeMenu();
     });
-    /* Esc also closes */
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && navLinks.classList.contains('open')) closeMenu();
     });

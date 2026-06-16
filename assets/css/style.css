@@ -1135,80 +1135,183 @@ p { color: var(--ink-soft); }
   .section-head { margin-bottom: 2rem; }
   .container { padding: 0 1.5rem; }
 
-  /* ----- Header rebuild for mobile ----- */
-  .nav { padding: 0.6rem 0; gap: 0.5rem; }
+  /* =================================================================
+     Mobile header & menu — rebuilt from scratch.
+     Layout:  [logo + brand name]                       [hamburger]
+     Lang toggle + Donate move INSIDE the slide-out panel (JS clones
+     them on init), so the header has only two things to render.
+     ================================================================= */
+  .nav { padding: 0.65rem 0; gap: 0.75rem; }
   .brand {
-    gap: 0.55rem;
-    min-width: 0;          /* allow flex child to shrink */
+    gap: 0.6rem;
+    min-width: 0;
     flex: 1 1 0;
     overflow: hidden;
   }
   .brand-logo {
-    width: 38px; height: 38px;
+    width: 40px; height: 40px;
     padding: 2px;
     flex-shrink: 0;
   }
-  .brand-text { min-width: 0; line-height: 1.05; }
+  .brand-text { min-width: 0; line-height: 1.1; }
   .brand-name {
-    font-size: 0.92rem;
+    font-size: 1rem;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
   }
-  .brand-tag { display: none; }       /* hide tagline — saves a line */
+  .brand-tag { display: none; }
 
-  .nav-cta { gap: 0.35rem; flex-shrink: 0; }
-  .nav-cta .lang-toggle { padding: 2px; }
-  .nav-cta .lang-toggle button { padding: 0.3rem 0.55rem; font-size: 0.72rem; }
-  .nav-cta .btn { padding: 0.5rem 0.85rem; font-size: 0.8rem; }
-  .nav-cta .btn-outline { display: none; }
-  .menu-toggle { display: flex; }   /* base style above already styles it as a solid teal pill */
+  /* Header CTA: hamburger is the ONLY visible element on phones.
+     The lang toggle and donate button get cloned into the menu by JS. */
+  .nav-cta { gap: 0; flex-shrink: 0; }
+  .nav-cta .lang-toggle,
+  .nav-cta > .btn-primary,
+  .nav-cta > .btn-outline { display: none; }
 
-  /* ----- Slide-out menu ----- */
+  /* Hamburger — saffron pill, impossible to miss */
+  .menu-toggle {
+    display: flex;
+    width: 48px; height: 48px;
+    background: var(--saffron);
+    color: var(--white);
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(224, 122, 95, 0.4);
+  }
+  .menu-toggle:hover, .menu-toggle:focus-visible { background: var(--saffron-dark); }
+  .menu-toggle svg { width: 24px; height: 24px; }
+
+  /* Header sits above backdrop so the hamburger stays tappable when open */
+  .header { z-index: 120; }
+
+  /* ----- Slide-out panel ----- */
   .nav-links {
     position: fixed;
     top: 0; right: 0; bottom: 0;
-    width: 86%;
-    max-width: 320px;
+    width: 90%;
+    max-width: 360px;
     background: var(--white);
+    background-image: linear-gradient(180deg, var(--white) 0%, var(--cream) 100%);
     flex-direction: column;
     align-items: stretch;
-    padding: 4.5rem 1.25rem 2rem;
-    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.15);
+    padding: 1.25rem 1.25rem 1.5rem;
+    box-shadow: -12px 0 40px rgba(0, 0, 0, 0.18);
     transform: translateX(100%);
-    transition: transform 0.3s ease;
+    transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
     overflow-y: auto;
-    gap: 0.2rem;
-    z-index: 110;             /* above the header */
+    gap: 0;
+    z-index: 130;             /* above header */
+    -webkit-overflow-scrolling: touch;
   }
   .nav-links.open { transform: translateX(0); }
+  .nav-links a {
+    width: 100%;
+    padding: 0.95rem 1rem;
+    font-size: 1.02rem;
+    font-weight: 500;
+    color: var(--ink);
+    border-radius: 12px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+  }
+  .nav-links a:hover, .nav-links a.active {
+    color: var(--teal);
+    background: var(--cream-dark);
+    font-weight: 600;
+  }
+  .nav-links a.active::after { display: none; }   /* drop the desktop pip dot */
 
-  /* Dim backdrop when menu is open — tapping it closes the menu (JS) */
+  /* Menu header (close button row), injected by JS */
+  .menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.25rem 0.25rem 1rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .menu-header-title {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    color: var(--teal);
+    font-size: 1.05rem;
+  }
+  .menu-close {
+    display: flex;
+    width: 38px; height: 38px;
+    align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: var(--cream-dark);
+    color: var(--teal);
+    font-size: 1.5rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .menu-close:hover, .menu-close:focus-visible {
+    background: var(--line);
+    color: var(--saffron-dark);
+  }
+
+  /* Menu extras (lang toggle + donate CTA), injected by JS */
+  .menu-extras {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .menu-extras-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .menu-extras .lang-toggle {
+    display: inline-flex;
+    background: rgba(15, 76, 92, 0.08);
+    border-radius: 999px;
+    padding: 4px;
+    align-self: flex-start;
+  }
+  .menu-extras .lang-toggle button {
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--teal);
+    letter-spacing: 0.04em;
+  }
+  .menu-extras .lang-toggle button.active {
+    background: var(--teal);
+    color: var(--white);
+  }
+  .menu-extras .btn-primary {
+    width: 100%;
+    justify-content: center;
+    padding: 0.95rem 1rem;
+    font-size: 0.98rem;
+  }
+  /* If a heart-only Donate slipped through, show the real label inside the menu */
+  .menu-extras .btn-primary .lang-hi,
+  .menu-extras .btn-primary .lang-en { display: inline !important; }
+  [data-lang="hi"] .menu-extras .btn-primary .lang-en { display: none !important; }
+  [data-lang="en"] .menu-extras .btn-primary .lang-hi { display: none !important; }
+  .menu-extras .btn-primary::after { content: none !important; }
+
+  /* Dim backdrop while open — tappable to close (handled by JS) */
   body.menu-open::before {
     content: "";
     position: fixed;
     inset: 0;
-    background: rgba(15, 76, 92, 0.45);
-    backdrop-filter: blur(2px);
+    background: rgba(15, 76, 92, 0.5);
     -webkit-backdrop-filter: blur(2px);
-    z-index: 105;
-    opacity: 1;
-    animation: svs-backdrop-in 0.25s ease;
+    backdrop-filter: blur(2px);
+    z-index: 125;             /* between header (120) and panel (130) */
+    animation: svs-backdrop-in 0.22s ease;
   }
   @keyframes svs-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
-
-  /* Header should sit above backdrop so the hamburger stays tappable to close */
-  .header { z-index: 120; }
-  .nav-links a {
-    width: 100%;
-    padding: 0.85rem 1rem;
-    font-size: 0.98rem;
-    border-radius: 10px;
-  }
-  /* Surface a language switcher inside the menu by promoting the existing
-     lang-toggle copy (we use ::before/after rather than HTML changes).
-     The actual switcher inside the header is already hidden above; the
-     menu opens via JS adding .open. */
 
   /* ----- Topbar ----- */
   .topbar { padding: 0.4rem 0; font-size: 0.74rem; }
@@ -1327,24 +1430,12 @@ p { color: var(--ink-soft); }
 
 @media (max-width: 480px) {
   .container { padding: 0 1.5rem; }   /* match the about-us section spacing */
-  .nav { padding: 0.5rem 0; gap: 0.4rem; }
+  .nav { padding: 0.55rem 0; gap: 0.5rem; }
   .topbar-left .hide-xs { display: none; }
   .topbar-left { font-size: 0.72rem; gap: 0.6rem; }
-  .brand-logo { width: 34px; height: 34px; }
-  .brand-name { font-size: 0.85rem; }
-
-  /* Replace Donate text with heart icon to fit narrow screens */
-  .nav-cta .btn-primary {
-    padding: 0.5rem 0.7rem;
-    font-size: 0.78rem;
-  }
-  .nav-cta .btn-primary .lang-hi,
-  .nav-cta .btn-primary .lang-en { display: none !important; }
-  .nav-cta .btn-primary::after {
-    content: "♥";
-    font-size: 1rem;
-    line-height: 1;
-  }
+  .brand-logo { width: 36px; height: 36px; }
+  .brand-name { font-size: 0.92rem; }
+  .menu-toggle { width: 44px; height: 44px; border-radius: 12px; }
 
   h1 { font-size: clamp(1.6rem, 9vw, 2rem) !important; }
   .hero-grid { padding: 1.5rem 0 2.5rem; }
