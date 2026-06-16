@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# Editor / tooling
+.claude/
+.vscode/
+.idea/
+
+# Source material — not deployed
+*.pdf
+info.txt
+website-blueprint.jpeg
+
+# Unused root-level image copies (the deployed versions live in assets/images/)
+logo.jpeg
+media-1.jpeg
+media-2.jpeg
+media-3.jpeg
+media-4.jpeg
+media-5.jpeg
+media-6.jpeg
+media-7.jpeg
+media-8.jpeg
