@@ -258,12 +258,18 @@ p { color: var(--ink-soft); }
 
 .menu-toggle {
   display: none;
-  width: 42px; height: 42px;
+  width: 44px; height: 44px;
   align-items: center; justify-content: center;
-  border-radius: 8px;
-  color: var(--teal);
+  border-radius: 12px;
+  background: var(--teal);
+  color: var(--white);
+  box-shadow: 0 4px 12px rgba(15, 76, 92, 0.25);
+  transition: background 0.2s ease, transform 0.15s ease;
 }
-.menu-toggle svg { width: 24px; height: 24px; }
+.menu-toggle:hover, .menu-toggle:focus-visible { background: var(--teal-dark); }
+.menu-toggle:active { transform: scale(0.94); }
+.menu-toggle svg { width: 22px; height: 22px; }
+.menu-toggle svg path { stroke-width: 2.5; stroke-linecap: round; }
 
 /* ----- Hero ----- */
 .hero {
@@ -1156,15 +1162,7 @@ p { color: var(--ink-soft); }
   .nav-cta .lang-toggle button { padding: 0.3rem 0.55rem; font-size: 0.72rem; }
   .nav-cta .btn { padding: 0.5rem 0.85rem; font-size: 0.8rem; }
   .nav-cta .btn-outline { display: none; }
-  .menu-toggle {
-    display: flex;
-    width: 42px; height: 42px;
-    background: rgba(15, 76, 92, 0.07);
-    color: var(--teal);
-  }
-  .menu-toggle:hover, .menu-toggle:focus-visible {
-    background: rgba(15, 76, 92, 0.14);
-  }
+  .menu-toggle { display: flex; }   /* base style above already styles it as a solid teal pill */
 
   /* ----- Slide-out menu ----- */
   .nav-links {
@@ -1181,8 +1179,26 @@ p { color: var(--ink-soft); }
     transition: transform 0.3s ease;
     overflow-y: auto;
     gap: 0.2rem;
+    z-index: 110;             /* above the header */
   }
   .nav-links.open { transform: translateX(0); }
+
+  /* Dim backdrop when menu is open — tapping it closes the menu (JS) */
+  body.menu-open::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 76, 92, 0.45);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 105;
+    opacity: 1;
+    animation: svs-backdrop-in 0.25s ease;
+  }
+  @keyframes svs-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+
+  /* Header should sit above backdrop so the hamburger stays tappable to close */
+  .header { z-index: 120; }
   .nav-links a {
     width: 100%;
     padding: 0.85rem 1rem;

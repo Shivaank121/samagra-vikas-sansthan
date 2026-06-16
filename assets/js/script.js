@@ -31,16 +31,33 @@
   const menuToggle = document.querySelector('.menu-toggle');
   const navLinks = document.querySelector('.nav-links');
   if (menuToggle && navLinks) {
+    function closeMenu() {
+      navLinks.classList.remove('open');
+      document.body.classList.remove('menu-open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    }
+    function openMenu() {
+      navLinks.classList.add('open');
+      document.body.classList.add('menu-open');
+      menuToggle.setAttribute('aria-expanded', 'true');
+    }
     menuToggle.addEventListener('click', () => {
-      const isOpen = navLinks.classList.toggle('open');
-      document.body.classList.toggle('menu-open', isOpen);
-      menuToggle.setAttribute('aria-expanded', isOpen);
+      if (navLinks.classList.contains('open')) closeMenu(); else openMenu();
     });
-    navLinks.querySelectorAll('a').forEach(a => {
-      a.addEventListener('click', () => {
-        navLinks.classList.remove('open');
-        document.body.classList.remove('menu-open');
-      });
+    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+
+    /* Backdrop tap closes the menu. The dim overlay is a ::before pseudo on
+       body.menu-open — clicks on any non-menu area while the menu is open
+       are treated as a request to close. */
+    document.addEventListener('click', (e) => {
+      if (!document.body.classList.contains('menu-open')) return;
+      if (e.target.closest('.nav-links')) return;
+      if (e.target.closest('.menu-toggle')) return;
+      closeMenu();
+    });
+    /* Esc also closes */
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && navLinks.classList.contains('open')) closeMenu();
     });
   }
 
