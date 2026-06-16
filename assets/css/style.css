@@ -66,7 +66,9 @@ ul { list-style: none; }
 .text-center { text-align: center; }
 
 .eyebrow {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
   font-size: 0.78rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -74,7 +76,14 @@ ul { list-style: none; }
   font-weight: 700;
   margin-bottom: 0.85rem;
 }
-.eyebrow::before { content: "❋ "; opacity: 0.7; }
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 22px;
+  height: 2px;
+  background: var(--saffron);
+  border-radius: 999px;
+}
 
 h1, h2, h3, h4 {
   font-family: var(--font-serif);
@@ -1110,45 +1119,223 @@ p { color: var(--ink-soft); }
 }
 
 @media (max-width: 768px) {
-  .section { padding: 3.5rem 0; }
-  .menu-toggle { display: flex; }
+  body.menu-open { overflow: hidden; }
+  .section { padding: 3rem 0; }
+  .section-head { margin-bottom: 2rem; }
+  .container { padding: 0 1.5rem; }
+
+  /* ----- Header rebuild for mobile ----- */
+  .nav { padding: 0.6rem 0; gap: 0.5rem; }
+  .brand {
+    gap: 0.55rem;
+    min-width: 0;          /* allow flex child to shrink */
+    flex: 1 1 0;
+    overflow: hidden;
+  }
+  .brand-logo {
+    width: 38px; height: 38px;
+    padding: 2px;
+    flex-shrink: 0;
+  }
+  .brand-text { min-width: 0; line-height: 1.05; }
+  .brand-name {
+    font-size: 0.92rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .brand-tag { display: none; }       /* hide tagline — saves a line */
+
+  .nav-cta { gap: 0.35rem; flex-shrink: 0; }
+  .nav-cta .lang-toggle { padding: 2px; }
+  .nav-cta .lang-toggle button { padding: 0.3rem 0.55rem; font-size: 0.72rem; }
+  .nav-cta .btn { padding: 0.5rem 0.85rem; font-size: 0.8rem; }
+  .nav-cta .btn-outline { display: none; }
+  .menu-toggle { display: flex; width: 38px; height: 38px; }
+
+  /* ----- Slide-out menu ----- */
   .nav-links {
     position: fixed;
-    top: 0; right: 0;
-    bottom: 0;
-    width: 84%;
+    top: 0; right: 0; bottom: 0;
+    width: 86%;
     max-width: 320px;
     background: var(--white);
     flex-direction: column;
-    align-items: flex-start;
-    padding: 5rem 1.5rem 2rem;
+    align-items: stretch;
+    padding: 4.5rem 1.25rem 2rem;
     box-shadow: -8px 0 32px rgba(0, 0, 0, 0.15);
     transform: translateX(100%);
     transition: transform 0.3s ease;
     overflow-y: auto;
-    gap: 0.25rem;
+    gap: 0.2rem;
   }
   .nav-links.open { transform: translateX(0); }
-  .nav-links a { width: 100%; padding: 0.85rem 1rem; }
-  .nav-cta .btn { padding: 0.65rem 1rem; font-size: 0.85rem; }
-  .nav-cta .btn-outline { display: none; }
-  .topbar-left { font-size: 0.78rem; gap: 0.85rem; }
+  .nav-links a {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    font-size: 0.98rem;
+    border-radius: 10px;
+  }
+  /* Surface a language switcher inside the menu by promoting the existing
+     lang-toggle copy (we use ::before/after rather than HTML changes).
+     The actual switcher inside the header is already hidden above; the
+     menu opens via JS adding .open. */
+
+  /* ----- Topbar ----- */
+  .topbar { padding: 0.4rem 0; font-size: 0.74rem; }
+  .topbar-left { gap: 0.85rem; font-size: 0.74rem; }
   .topbar-right { display: none; }
-  .hero-stats { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-  .impact-grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+  /* ----- Hero ----- */
+  .hero-grid { padding: 2.25rem 0 3rem; gap: 2rem; }
+  h1 { font-size: clamp(1.8rem, 8vw, 2.4rem) !important; }
+  .hero-content .lead { font-size: 1rem; }
+  .hero-slider { aspect-ratio: 4/3; max-height: 360px; border-radius: 18px; }
+  .slide-caption { padding: 1.5rem 1rem 1rem; }
+  .slide-caption h3 { font-size: 1rem; }
+
+  /* Stats: keep three across but compact */
+  .hero-stats { grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-top: 2rem; padding-top: 1.5rem; }
+  .stat-num { font-size: 1.35rem; }
+  .stat-label { font-size: 0.7rem; }
+
+  /* Section heads */
+  h2 { font-size: clamp(1.5rem, 5.5vw, 1.9rem) !important; }
+  .lead { font-size: 1rem; }
+
+  /* Trust strip */
+  .trust-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .trust-item { font-size: 0.82rem; }
+  .trust-item .badge-icon { width: 34px; height: 34px; font-size: 0.85rem; }
+
+  /* Programs / News / Cards */
+  .programs-grid, .news-grid, .involve-grid { grid-template-columns: 1fr; gap: 1rem; }
+  .program-card, .involve-card { padding: 1.5rem 1.25rem; }
+  .news-body { padding: 1.25rem; }
+
+  /* Impact */
+  .impact-grid { grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  .impact-num { font-size: 2.2rem; }
+
+  /* Page header */
+  .page-header { padding: 3rem 0 2.5rem; }
+  .page-header h1 { font-size: 1.9rem !important; }
+  .page-header p { font-size: 0.95rem; }
+  .breadcrumb { margin-bottom: 1rem; font-size: 0.78rem; }
+
+  /* About */
+  .about-grid, .about-detail-grid, .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .feature-list li { font-size: 0.92rem; }
+
+  /* Project rows */
+  .project-row, .project-row:nth-child(even) { grid-template-columns: 1fr; }
+  .project-row:nth-child(even) .project-img { order: 0; }
+  .project-img img { min-height: 220px; }
+  .project-body { padding: 1.5rem 1.25rem; }
+  .project-body h3 { font-size: 1.25rem; }
+  .project-stats { gap: 1.25rem; }
+  .project-stats div span { font-size: 1.25rem; }
+
+  /* Forms */
   .form-grid { grid-template-columns: 1fr; }
+  .form-card, .news-feature-body, .donate-card { padding: 1.5rem 1.25rem; }
   .donate-amounts { grid-template-columns: 1fr 1fr; }
-  .footer-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-  .cta-band { padding: 2.5rem 1.5rem; }
-  .form-card, .news-feature-body, .project-body, .donate-card { padding: 1.75rem; }
-  .brand-name { font-size: 1rem; }
-  .brand-tag { font-size: 0.65rem; }
-  .brand-logo { width: 46px; height: 46px; }
-  body.menu-open { overflow: hidden; }
+  .amount-btn { padding: 0.85rem; font-size: 0.95rem; }
+
+  /* Registration table — make scrollable on tiny screens */
+  .reg-table th, .reg-table td { padding: 0.65rem 0.75rem; font-size: 0.85rem; }
+  .reg-table th { width: 42%; }
+  .reg-card { padding: 1rem 0.75rem; }
+
+  /* News feature */
+  .news-feature { grid-template-columns: 1fr; }
+  .news-feature-body { padding: 1.5rem; }
+  .news-feature-body h2 { font-size: 1.3rem !important; }
+
+  /* Gallery */
+  .gallery-grid { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .gallery-caption { padding: 0.85rem; font-size: 0.78rem; }
+  .lightbox-nav { width: 40px; height: 40px; }
+  .lightbox-prev { left: 0.5rem; }
+  .lightbox-next { right: 0.5rem; }
+  .lightbox-close { top: 0.85rem; right: 0.85rem; }
+
+  /* Team */
+  .team-grid { grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+  .team-card { padding: 1.25rem 0.85rem; }
+  .team-avatar { width: 64px; height: 64px; font-size: 1.4rem; }
+  .team-card h3 { font-size: 0.98rem; }
+  .team-card .role { font-size: 0.72rem; }
+
+  /* Value cards */
+  .value-cards { grid-template-columns: 1fr; gap: 1rem; }
+  .value-card { padding: 1.5rem 1.25rem; }
+
+  /* Contact items */
+  .contact-item { padding: 1.25rem 1rem; }
+  .contact-icon { width: 38px; height: 38px; }
+
+  /* CTA band */
+  .cta-band { padding: 2.25rem 1.25rem; border-radius: 18px; margin: 1rem auto; }
+  .cta-band h2 { font-size: 1.45rem !important; }
+
+  /* Hero CTA */
+  .hero-cta { flex-direction: column; align-items: stretch; }
+  .hero-cta .btn { justify-content: center; padding: 0.85rem 1rem; }
+
+  /* Footer */
+  .footer { padding: 3rem 0 0; margin-top: 2.5rem; }
+  .footer-grid { grid-template-columns: 1fr; gap: 2rem; padding-bottom: 2rem; }
+  .footer h4 { margin-bottom: 0.85rem; }
+
+  /* Map */
+  .map-wrap iframe { height: 280px; }
+
+  /* WhatsApp float — smaller on mobile so it doesn't dominate */
+  .whatsapp-float { width: 48px; height: 48px; bottom: 1rem; right: 1rem; }
+  .whatsapp-float svg { width: 24px; height: 24px; }
 }
 
 @media (max-width: 480px) {
-  .hero-cta { flex-direction: column; align-items: stretch; }
-  .hero-cta .btn { justify-content: center; }
+  .container { padding: 0 1.25rem; }
+  .nav { padding: 0.5rem 0; gap: 0.4rem; }
   .topbar-left .hide-xs { display: none; }
+  .topbar-left { font-size: 0.72rem; gap: 0.6rem; }
+  .brand-logo { width: 34px; height: 34px; }
+  .brand-name { font-size: 0.85rem; }
+
+  /* Replace Donate text with heart icon to fit narrow screens */
+  .nav-cta .btn-primary {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.78rem;
+  }
+  .nav-cta .btn-primary .lang-hi,
+  .nav-cta .btn-primary .lang-en { display: none !important; }
+  .nav-cta .btn-primary::after {
+    content: "♥";
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  h1 { font-size: clamp(1.6rem, 9vw, 2rem) !important; }
+  .hero-grid { padding: 1.5rem 0 2.5rem; }
+  .hero-content .lead { font-size: 0.95rem; }
+  .stat-num { font-size: 1.2rem; }
+  .stat-label { font-size: 0.65rem; line-height: 1.2; }
+
+  .trust-grid { grid-template-columns: 1fr; }
+
+  .gallery-grid { grid-template-columns: 1fr; }
+  .impact-grid { grid-template-columns: 1fr; gap: 1rem; }
+
+  .donate-amounts { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .amount-btn { padding: 0.75rem; font-size: 0.9rem; }
+
+  .page-header { padding: 2.5rem 0 2rem; }
+  .page-header h1 { font-size: 1.6rem !important; }
+
+  .cta-band h2 { font-size: 1.25rem !important; }
+  .cta-band p { font-size: 0.92rem; }
+
+  .footer-bottom { flex-direction: column; align-items: flex-start; font-size: 0.78rem; }
 }
