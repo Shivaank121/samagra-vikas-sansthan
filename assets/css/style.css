@@ -166,9 +166,10 @@ p { color: var(--ink-soft); }
 
 .header {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(248, 244, 237, 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(248, 244, 237, 0.96);
+  /* NO backdrop-filter — it creates a containing block for position:fixed
+     descendants, which would trap the mobile slide-out panel inside the
+     header's 60px height instead of letting it fill the viewport. */
   border-bottom: 1px solid var(--line);
 }
 .nav {
@@ -270,6 +271,10 @@ p { color: var(--ink-soft); }
 .menu-toggle:active { transform: scale(0.94); }
 .menu-toggle svg { width: 22px; height: 22px; }
 .menu-toggle svg path { stroke-width: 2.5; stroke-linecap: round; }
+
+/* JS injects these into the slide-out panel for phones — kept hidden at
+   desktop widths so they don't leak into the inline nav row. */
+.menu-header, .menu-extras, .menu-close { display: none; }
 
 /* ----- Hero ----- */
 .hero {
@@ -1181,8 +1186,9 @@ p { color: var(--ink-soft); }
   .menu-toggle:hover, .menu-toggle:focus-visible { background: var(--saffron-dark); }
   .menu-toggle svg { width: 24px; height: 24px; }
 
-  /* Header sits above backdrop so the hamburger stays tappable when open */
-  .header { z-index: 120; }
+  /* Header (and the slide-out panel inside it) must sit ABOVE the backdrop,
+     otherwise the backdrop's blur/dim is applied to the panel content. */
+  .header { z-index: 200; }
 
   /* ----- Slide-out panel ----- */
   .nav-links {
@@ -1300,15 +1306,15 @@ p { color: var(--ink-soft); }
   [data-lang="en"] .menu-extras .btn-primary .lang-hi { display: none !important; }
   .menu-extras .btn-primary::after { content: none !important; }
 
-  /* Dim backdrop while open — tappable to close (handled by JS) */
+  /* Dim backdrop while open — tappable to close (handled by JS).
+     No backdrop-filter: blur, no z-index above the header. We want the
+     panel (inside header) to render fully opaque, untouched by any blur. */
   body.menu-open::before {
     content: "";
     position: fixed;
     inset: 0;
     background: rgba(15, 76, 92, 0.5);
-    -webkit-backdrop-filter: blur(2px);
-    backdrop-filter: blur(2px);
-    z-index: 125;             /* between header (120) and panel (130) */
+    z-index: 150;
     animation: svs-backdrop-in 0.22s ease;
   }
   @keyframes svs-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
