@@ -385,31 +385,91 @@ p { color: var(--ink-soft); }
   background: var(--white);
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
-  padding: 1.5rem 0;
+  padding: 2rem 0;
 }
 .trust-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1.5rem;
-  align-items: center;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  align-items: stretch;
 }
 .trust-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.9rem;
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--white) 0%, var(--cream) 100%);
+  border: 1px solid var(--line);
   color: var(--ink-soft);
-  font-size: 0.88rem;
+  font-size: 0.82rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.trust-item::before {
+  /* Soft colored corner glow per badge variant */
+  content: "";
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: var(--badge-tint, var(--sage));
+  opacity: 0.18;
+  pointer-events: none;
+  filter: blur(8px);
+}
+.trust-item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: transparent;
 }
 .trust-item .badge-icon {
-  width: 38px; height: 38px;
-  border-radius: 50%;
-  background: var(--cream-dark);
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: var(--badge-gradient, linear-gradient(135deg, var(--sage), var(--sage-dark)));
   display: flex; align-items: center; justify-content: center;
-  color: var(--teal);
-  font-weight: 700;
+  color: var(--white);
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: -0.02em;
   flex-shrink: 0;
+  box-shadow: 0 6px 14px rgba(15, 76, 92, 0.18);
+  position: relative;
+  z-index: 1;
 }
-.trust-item strong { color: var(--ink); display: block; font-size: 0.95rem; }
+.trust-item strong {
+  color: var(--ink);
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.05rem;
+  letter-spacing: -0.01em;
+}
+.trust-item > div { min-width: 0; }
+.trust-item > div > span:not(.badge-icon) {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* Per-badge accent — varies the icon gradient and corner glow.
+   Order matches the markup: ISO, 80G/Tax-exempt, NGO Darpan, Years. */
+.trust-grid .trust-item:nth-child(1) {
+  --badge-gradient: linear-gradient(135deg, #2A9D8F, #5E9D82);
+  --badge-tint: #2A9D8F;
+}
+.trust-grid .trust-item:nth-child(2) {
+  --badge-gradient: linear-gradient(135deg, var(--saffron), var(--saffron-dark));
+  --badge-tint: var(--saffron);
+}
+.trust-grid .trust-item:nth-child(3) {
+  --badge-gradient: linear-gradient(135deg, var(--gold), #B8851A);
+  --badge-tint: var(--gold);
+}
+.trust-grid .trust-item:nth-child(4) {
+  --badge-gradient: linear-gradient(135deg, var(--teal), var(--teal-light));
+  --badge-tint: var(--teal);
+}
 
 /* ----- Section heading ----- */
 .section-head {
@@ -1138,7 +1198,7 @@ p { color: var(--ink-soft); }
   body.menu-open { overflow: hidden; }
   .section { padding: 3rem 0; }
   .section-head { margin-bottom: 2rem; }
-  .container { padding: 0 1.5rem; }
+  .container { padding: 0 1.75rem; }   /* generous mobile breathing room */
 
   /* =================================================================
      Mobile header & menu — rebuilt from scratch.
@@ -1158,21 +1218,34 @@ p { color: var(--ink-soft); }
     padding: 2px;
     flex-shrink: 0;
   }
-  .brand-text { min-width: 0; line-height: 1.1; }
+  .brand-text { min-width: 0; line-height: 1.15; }
   .brand-name {
-    font-size: 1rem;
+    font-size: 0.98rem;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
   }
-  .brand-tag { display: none; }
+  .brand-tag {
+    display: block;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    margin-top: 1px;
+  }
 
-  /* Header CTA: hamburger is the ONLY visible element on phones.
-     The lang toggle and donate button get cloned into the menu by JS. */
-  .nav-cta { gap: 0; flex-shrink: 0; }
-  .nav-cta .lang-toggle,
+  /* Header CTA on mobile: keep the language switcher and hamburger here
+     (room is available because Donate has been moved into the slide-out
+     panel by JS). */
+  .nav-cta { gap: 0.45rem; flex-shrink: 0; }
   .nav-cta > .btn-primary,
   .nav-cta > .btn-outline { display: none; }
+  .nav-cta .lang-toggle {
+    display: inline-flex;
+    padding: 2px;
+  }
+  .nav-cta .lang-toggle button {
+    padding: 0.32rem 0.55rem;
+    font-size: 0.72rem;
+  }
 
   /* Hamburger — saffron pill, impossible to miss */
   .menu-toggle {
@@ -1342,9 +1415,12 @@ p { color: var(--ink-soft); }
   .lead { font-size: 1rem; }
 
   /* Trust strip */
-  .trust-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
-  .trust-item { font-size: 0.82rem; }
-  .trust-item .badge-icon { width: 34px; height: 34px; font-size: 0.85rem; }
+  .trust-strip { padding: 1.5rem 0; }
+  .trust-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .trust-item { padding: 0.85rem 0.9rem; gap: 0.7rem; font-size: 0.75rem; }
+  .trust-item .badge-icon { width: 38px; height: 38px; font-size: 0.78rem; border-radius: 10px; }
+  .trust-item strong { font-size: 0.85rem; }
+  .trust-item > div > span:not(.badge-icon) { font-size: 0.72rem; }
 
   /* Programs / News / Cards */
   .programs-grid, .news-grid, .involve-grid { grid-template-columns: 1fr; gap: 1rem; }
@@ -1435,13 +1511,16 @@ p { color: var(--ink-soft); }
 }
 
 @media (max-width: 480px) {
-  .container { padding: 0 1.5rem; }   /* match the about-us section spacing */
+  .container { padding: 0 1.75rem; }   /* generous mobile breathing room */
   .nav { padding: 0.55rem 0; gap: 0.5rem; }
   .topbar-left .hide-xs { display: none; }
   .topbar-left { font-size: 0.72rem; gap: 0.6rem; }
   .brand-logo { width: 36px; height: 36px; }
   .brand-name { font-size: 0.92rem; }
+  .brand-tag { font-size: 0.56rem; }
   .menu-toggle { width: 44px; height: 44px; border-radius: 12px; }
+  .nav-cta .lang-toggle button { padding: 0.3rem 0.5rem; font-size: 0.68rem; }
+  .nav-cta { gap: 0.35rem; }
 
   h1 { font-size: clamp(1.6rem, 9vw, 2rem) !important; }
   .hero-grid { padding: 1.5rem 0 2.5rem; }
@@ -1449,7 +1528,7 @@ p { color: var(--ink-soft); }
   .stat-num { font-size: 1.2rem; }
   .stat-label { font-size: 0.65rem; line-height: 1.2; }
 
-  .trust-grid { grid-template-columns: 1fr; }
+  .trust-grid { grid-template-columns: 1fr; gap: 0.65rem; }
 
   .gallery-grid { grid-template-columns: 1fr; }
   .impact-grid { grid-template-columns: 1fr; gap: 1rem; }

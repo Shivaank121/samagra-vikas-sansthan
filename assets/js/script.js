@@ -69,33 +69,17 @@
       header.append(title, closeBtn);
       navLinks.prepend(header);
 
-      /* Clone header lang toggle + donate CTA into a "menu-extras" block */
-      const srcLang = document.querySelector('.nav-cta .lang-toggle');
+      /* Clone the header Donate CTA into a "menu-extras" block at the
+         bottom of the slide-out panel. The language toggle stays in the
+         header on mobile (there is enough room next to the hamburger),
+         so we don't duplicate it inside the menu. */
       const srcDonate = document.querySelector('.nav-cta > .btn-primary');
-      if (srcLang || srcDonate) {
+      if (srcDonate) {
         const extras = document.createElement('div');
         extras.className = 'menu-extras';
-
-        if (srcLang) {
-          const langClone = srcLang.cloneNode(true);
-          langClone.querySelectorAll('button').forEach(b => {
-            b.addEventListener('click', () => {
-              setLang(b.dataset.lang);
-              /* re-sync active state in both copies */
-              document.querySelectorAll('.lang-toggle button').forEach(x => {
-                x.classList.toggle('active', x.dataset.lang === b.dataset.lang);
-              });
-            });
-            if (b.dataset.lang === initialLang) b.classList.add('active');
-          });
-          extras.append(langClone);
-        }
-
-        if (srcDonate) {
-          const donateClone = srcDonate.cloneNode(true);
-          donateClone.addEventListener('click', closeMenu);
-          extras.append(donateClone);
-        }
+        const donateClone = srcDonate.cloneNode(true);
+        donateClone.addEventListener('click', closeMenu);
+        extras.append(donateClone);
         navLinks.append(extras);
       }
     }
