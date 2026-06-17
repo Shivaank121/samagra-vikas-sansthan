@@ -287,7 +287,10 @@ p { color: var(--ink-soft); }
   grid-template-columns: 1.05fr 1fr;
   gap: 4rem;
   align-items: center;
-  padding: 4.5rem 0 5.5rem;
+  /* Use padding-top/bottom longhand so we don't clobber the side padding
+     inherited from .container (the same element carries both classes). */
+  padding-top: 4.5rem;
+  padding-bottom: 5.5rem;
 }
 .hero-content h1 {
   margin-bottom: 1.25rem;
@@ -1198,7 +1201,7 @@ p { color: var(--ink-soft); }
   body.menu-open { overflow: hidden; }
   .section { padding: 3rem 0; }
   .section-head { margin-bottom: 2rem; }
-  .container { padding: 0 1.75rem; }   /* generous mobile breathing room */
+  .container { padding: 0 1.5rem; }
 
   /* =================================================================
      Mobile header & menu — rebuilt from scratch.
@@ -1398,7 +1401,7 @@ p { color: var(--ink-soft); }
   .topbar-right { display: none; }
 
   /* ----- Hero ----- */
-  .hero-grid { padding: 2.25rem 0 3rem; gap: 2rem; }
+  .hero-grid { padding-top: 2.25rem; padding-bottom: 3rem; gap: 2rem; }
   h1 { font-size: clamp(1.8rem, 8vw, 2.4rem) !important; }
   .hero-content .lead { font-size: 1rem; }
   .hero-slider { aspect-ratio: 4/3; max-height: 360px; border-radius: 18px; }
@@ -1511,7 +1514,7 @@ p { color: var(--ink-soft); }
 }
 
 @media (max-width: 480px) {
-  .container { padding: 0 1.75rem; }   /* generous mobile breathing room */
+  .container { padding: 0 1.5rem; }
   .nav { padding: 0.55rem 0; gap: 0.5rem; }
   .topbar-left .hide-xs { display: none; }
   .topbar-left { font-size: 0.72rem; gap: 0.6rem; }
@@ -1523,7 +1526,7 @@ p { color: var(--ink-soft); }
   .nav-cta { gap: 0.35rem; }
 
   h1 { font-size: clamp(1.6rem, 9vw, 2rem) !important; }
-  .hero-grid { padding: 1.5rem 0 2.5rem; }
+  .hero-grid { padding-top: 1.5rem; padding-bottom: 2.5rem; }
   .hero-content .lead { font-size: 0.95rem; }
   .stat-num { font-size: 1.2rem; }
   .stat-label { font-size: 0.65rem; line-height: 1.2; }
